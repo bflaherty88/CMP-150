@@ -5,16 +5,24 @@ public class CharacterControl : MonoBehaviour {
 
     public Control MoveForward;
     public Control MoveBackward;
-    public Control MoveLeft;
-    public Control MoveRight;
+    public Control TurnLeft;
+    public Control TurnRight;
     public Control Jump;
 
     public float moveSpeed = 5f;
+    public float rotSpeed = 100f;
     public float jumpHeight = 5f;
+
+    private bool isGrounded = false;
 
     private float trueSpeed
     {
         get { return (moveSpeed * Time.deltaTime); }
+    }
+
+    private float trueRotSpeed
+    {
+        get { return (rotSpeed * Time.deltaTime); }
     }
 
 	
@@ -25,6 +33,8 @@ public class CharacterControl : MonoBehaviour {
 	
 	void Update () {
 
+        //Change to physics movement
+
         if (MoveForward.IsActive)
         {
             transform.Translate(Vector3.forward * trueSpeed);
@@ -33,18 +43,36 @@ public class CharacterControl : MonoBehaviour {
         {
             transform.Translate(Vector3.forward * -trueSpeed);
         }
-        if (MoveLeft.IsActive)
+        if (TurnLeft.IsActive)
         {
-            transform.Translate(Vector3.left * trueSpeed);
+            transform.Rotate(Vector3.down * trueRotSpeed);
         }
-        if (MoveRight.IsActive)
+        if (TurnRight.IsActive)
         {
-            transform.Translate(Vector3.left * -trueSpeed);
+            transform.Rotate(Vector3.down * -trueRotSpeed);
         }
 
-        if (Jump.IsPressed) //Need Ground Check Here
+        if (Jump.IsPressed && isGrounded)
         {
             rigidbody.AddForce(Vector3.up * jumpHeight);
         }
+        
+        //add terminal vel
 	}
+
+    void OnCollisionStay(Collision collisionInfo)
+    {
+        foreach (ContactPoint contact in collisionInfo.contacts)
+        {
+            if (transform.position.y - .75 > contact.point.y)
+                isGrounded = true;
+            else
+                isGrounded = false;
+        }
+    }
+
+    void OnCollisionExit()
+    {
+        isGrounded = false;
+    }
 }
