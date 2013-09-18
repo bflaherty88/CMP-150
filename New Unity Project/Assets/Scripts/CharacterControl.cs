@@ -1,78 +1,38 @@
 using UnityEngine;
 using System.Collections;
 
-public class CharacterControl : MonoBehaviour {
-
-    public Control MoveForward;
-    public Control MoveBackward;
-    public Control TurnLeft;
-    public Control TurnRight;
-    public Control Jump;
+[RequireComponent(typeof(CharacterController))]
+public class CharacterControl : MonoBehaviour
+{
+    CharacterController controller;
 
     public float moveSpeed = 5f;
-    public float rotSpeed = 100f;
-    public float jumpHeight = 5f;
+    public float jumpHeight = 8f;
+    public float jumpBoost = 1.5f;
+    public float gravity = 20f;
 
-    private bool isGrounded = false;
+    private Vector3 moveDirection = Vector3.zero;
 
-    private float trueSpeed
+    void Start()
     {
-        get { return (moveSpeed * Time.deltaTime); }
+        controller = GetComponent<CharacterController>();
     }
 
-    private float trueRotSpeed
+    void Update()
     {
-        get { return (rotSpeed * Time.deltaTime); }
+        if (controller.isGrounded)
+        {
+            moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, 0);
+            moveDirection = transform.TransformDirection(moveDirection);
+            if (Input.GetButtonDown("Jump"))
+            {
+                moveDirection.y = jumpHeight;
+                moveDirection.x *= jumpBoost;
+            }
+        }
+
+        moveDirection.y -= gravity * Time.deltaTime;
+        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
     }
 
-	
-	void Start () {
-	
-	}
-	
-	
-	void Update () {
-
-        //Change to physics movement
-
-        if (MoveForward.IsActive)
-        {
-            transform.Translate(Vector3.forward * trueSpeed);
-        }
-        if (MoveBackward.IsActive)
-        {
-            transform.Translate(Vector3.forward * -trueSpeed);
-        }
-        if (TurnLeft.IsActive)
-        {
-            transform.Rotate(Vector3.down * trueRotSpeed);
-        }
-        if (TurnRight.IsActive)
-        {
-            transform.Rotate(Vector3.down * -trueRotSpeed);
-        }
-
-        if (Jump.IsPressed && isGrounded)
-        {
-            rigidbody.AddForce(Vector3.up * jumpHeight);
-        }
-        
-        //add terminal vel
-	}
-
-    void OnCollisionStay(Collision collisionInfo)
-    {
-        foreach (ContactPoint contact in collisionInfo.contacts)
-        {
-            if (transform.position.y - .75 > contact.point.y)
-                isGrounded = true;
-            else
-                isGrounded = false;
-        }
-    }
-
-    void OnCollisionExit()
-    {
-        isGrounded = false;
-    }
 }
