@@ -5,11 +5,15 @@ public class WorldControl : MonoBehaviour {
 
     private bool respawning = false;
     private bool paused = false;
+    private bool hasWon = false;
 
     public GameObject player;
-    private Vector3 playerStart;
     public GameObject camera;
+    public GameObject endTrigger;
+
+    private Vector3 playerStart;
     private Vector3 cameraStart;
+    private EndLevel endLevel;
 
     public float keyhole = 5f;
     public float cameraSpeed = 10f;
@@ -26,23 +30,38 @@ public class WorldControl : MonoBehaviour {
     {
         get { return camera.transform.position; }
     }
+
+    private Vector3 endPos
+    {
+        get { return endTrigger.transform.position; }
+    }
 	
     void Start()
     {
         playerStart = playerPos;
         cameraStart = cameraPos;
+        endLevel = endTrigger.GetComponent<EndLevel>();
     }
 
 	void Update () 
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            PauseGame();
 
-        if (playerPos.x > cameraPos.x - keyhole && !respawning)
-            camera.transform.Translate(Vector3.right * (playerPos.x + keyhole - cameraPos.x) * cameraSpeed * Time.deltaTime);
+        if (!endLevel.HasWon)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+                PauseGame();
 
-        if (player.transform.position.y < floor)
-            Respawn();
+            if (playerPos.x > cameraPos.x - keyhole && !respawning)
+                camera.transform.Translate(Vector3.right * (playerPos.x + keyhole - cameraPos.x) * cameraSpeed * Time.deltaTime);
+
+            if (player.transform.position.y < floor)
+                Respawn();
+        }
+        else
+        {
+            camera.transform.Translate(Vector3.right * (endPos.x - cameraPos.x) * cameraSpeed * Time.deltaTime);
+        }
+
 	}
 
     void PauseGame()
@@ -78,5 +97,10 @@ public class WorldControl : MonoBehaviour {
         characterControl.Blink();
         characterControl = null;
         respawning = false;
+    }
+
+    public void FinishLevel()
+    {
+
     }
 }
