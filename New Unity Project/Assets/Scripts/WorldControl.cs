@@ -14,6 +14,7 @@ public class WorldControl : MonoBehaviour {
     private Vector3 playerStart;
     private Vector3 cameraStart;
     private EndLevel endLevel;
+    CharacterControl characterControl;
 
     public float keyhole = 5f;
     public float cameraSpeed = 10f;
@@ -21,19 +22,24 @@ public class WorldControl : MonoBehaviour {
     public GUIStyle menuStyle;
     public float floor = -10f;
 
-    private Vector3 playerPos
+    public Vector3 playerPos
     {
         get { return player.transform.position; }
     }
 
-    private Vector3 cameraPos
+    public Vector3 cameraPos
     {
         get { return camera.transform.position; }
     }
 
-    private Vector3 endPos
+    public Vector3 endPos
     {
         get { return endTrigger.transform.position; }
+    }
+
+    public bool Respawning
+    {
+        get { return respawning; }
     }
 	
     void Start()
@@ -41,6 +47,7 @@ public class WorldControl : MonoBehaviour {
         playerStart = playerPos;
         cameraStart = cameraPos;
         endLevel = endTrigger.GetComponent<EndLevel>();
+        characterControl = player.GetComponent<CharacterControl>();
     }
 
 	void Update () 
@@ -92,11 +99,10 @@ public class WorldControl : MonoBehaviour {
         Destroy(player);
         camera.transform.position = cameraStart;
         player = temp;
-        temp = null;
+        temp = null;       
         CharacterControl characterControl = player.GetComponent<CharacterControl>();
-        characterControl.Blink();
-        characterControl = null;
-        respawning = false;
+        characterControl.Blink();       
+       // respawning = false;
     }
 
     public void FinishLevel()
