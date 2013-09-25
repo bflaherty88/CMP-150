@@ -6,10 +6,13 @@ public class WorldControl : MonoBehaviour {
     private bool respawning = false;
     private bool paused = false;
     private bool hasWon = false;
+    private bool gameOver = false;
 
     public GameObject player;
     public GameObject camera;
     public GameObject endTrigger;
+    public int score = 0;
+    public int lives = 5;
 
     private Vector3 playerStart;
     private Vector3 cameraStart;
@@ -20,6 +23,7 @@ public class WorldControl : MonoBehaviour {
     public float cameraSpeed = 10f;
 
     public GUIStyle menuStyle;
+    public GUIStyle gameOverStyle;
     public float floor = -10f;
 
     public Vector3 playerPos
@@ -62,13 +66,12 @@ public class WorldControl : MonoBehaviour {
                 camera.transform.Translate(Vector3.right * (playerPos.x + keyhole - cameraPos.x) * cameraSpeed * Time.deltaTime);
 
             if (player.transform.position.y < floor)
-                Respawn();
+                Kill();
         }
         else
         {
             camera.transform.Translate(Vector3.right * (endPos.x - cameraPos.x) * cameraSpeed * Time.deltaTime);
         }
-
 	}
 
     void PauseGame()
@@ -89,20 +92,39 @@ public class WorldControl : MonoBehaviour {
     {
         if (paused)
             GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Paused", menuStyle);
+        if (gameOver)
+            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Game Over", gameOverStyle);
+
+        GUI.Label(new Rect(0f, Screen.height - 40, 50f, 40f), "Score: " + score + "\nLives: " + lives);
         
     }
 
-    public void Respawn()
+    public void Kill()
     {
-        respawning = true;
-        GameObject temp = Instantiate(player, playerStart, Quaternion.identity) as GameObject;
-        Destroy(player);
-        camera.transform.position = cameraStart;
-        player = temp;
-        temp = null;       
-        CharacterControl characterControl = player.GetComponent<CharacterControl>();
-        characterControl.Blink();       
-       // respawning = false;
+        if (lives > 0)
+        {
+            respawning = true;
+            GameObject temp = Instantiate(player, playerStart, Quaternion.identity) as GameObject;
+            Destroy(player);
+            camera.transform.position = cameraStart;
+            player = temp;
+            temp = null;
+            CharacterControl characterControl = player.GetComponent<CharacterControl>();
+            characterControl.Blink();
+            if (score > 0)
+                score--;
+            lives--;
+            respawning = false;
+        }
+        else
+            GameOver();
+    }
+
+    public void GameOver()
+    {
+        Time.timeScale = 0;
+        gameOver = true;
+
     }
 
     public void FinishLevel()
