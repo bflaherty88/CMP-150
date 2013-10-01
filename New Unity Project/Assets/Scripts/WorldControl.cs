@@ -23,7 +23,7 @@ public class WorldControl : MonoBehaviour {
     public float cameraSpeed = 10f;
 
     public GUIStyle menuStyle;
-    public GUIStyle gameOverStyle;
+    public GUIStyle scoreStyle;
     public float floor = -10f;
 
     public Vector3 playerPos
@@ -90,12 +90,14 @@ public class WorldControl : MonoBehaviour {
 
     void OnGUI()
     {
-        if (paused)
+        if (endLevel.HasWon)
+            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "WIENER!", menuStyle);
+        else if (paused)
             GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Paused", menuStyle);
-        if (gameOver)
-            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Game Over", gameOverStyle);
+        else if (gameOver)
+            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Game Over", menuStyle);
 
-        GUI.Label(new Rect(0f, Screen.height - 40, 50f, 40f), "Score: " + score + "\nLives: " + lives);
+        GUI.Label(new Rect(0f, Screen.height - 40, 50f, 40f), "Score: " + score + "\nLives: " + lives, scoreStyle);
         
     }
 
