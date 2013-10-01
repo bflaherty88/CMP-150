@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Scorer : MonoBehaviour {
+public class Coin : MonoBehaviour {
 
     public GameObject worldController;
 
@@ -12,6 +12,11 @@ public class Scorer : MonoBehaviour {
         if (worldController == null)
             worldController = GameObject.FindGameObjectWithTag("GameController");
         worldControl = worldController.GetComponent<WorldControl>();
+    }
+
+    void Update()
+    {
+        animation.Play();
     }
 
     void OnTriggerEnter(Collider other)
