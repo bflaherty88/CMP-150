@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(AudioSource))]
 public class CharacterControl : MonoBehaviour
 {
     CharacterController controller;
@@ -29,6 +30,7 @@ public class CharacterControl : MonoBehaviour
             {
                 moveDirection.y = jumpHeight;
                 moveDirection.x *= jumpBoost;
+                audio.Play();
             }
         }
 

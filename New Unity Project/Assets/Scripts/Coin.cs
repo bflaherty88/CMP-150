@@ -4,6 +4,8 @@ using System.Collections;
 public class Coin : MonoBehaviour {
 
     public GameObject worldController;
+    public AudioClip pickup;
+    public int value = 1;
 
     private WorldControl worldControl;
 
@@ -23,8 +25,13 @@ public class Coin : MonoBehaviour {
     {
         if (other.tag.Equals("Player"))
         {
-            worldControl.score++;
+            worldControl.score += value;
+            AudioSource.PlayClipAtPoint(pickup, transform.position);
             Destroy(this.gameObject);
         }
+    }
+
+    void OnDestroy()
+    {
     }
 }
