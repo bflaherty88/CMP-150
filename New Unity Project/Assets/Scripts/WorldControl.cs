@@ -11,7 +11,7 @@ public class WorldControl : MonoBehaviour {
     public GameObject player;
     public GameObject camera;
     public GameObject endTrigger;
-    public int score = 0;
+    public static int score = 0;
     public int lives = 5;
 
     private Vector3 playerStart;
@@ -48,6 +48,21 @@ public class WorldControl : MonoBehaviour {
 	
     void Start()
     {
+        if (player == null)
+        {
+            player = GameObject.FindWithTag("Player");
+        }
+
+        if (camera == null)
+        {
+            camera = GameObject.FindWithTag("MainCamera");
+        }
+
+        if (endTrigger == null)
+        {
+            endTrigger = GameObject.FindWithTag("Finish");
+        }
+
         playerStart = playerPos;
         cameraStart = cameraPos;
         endLevel = endTrigger.GetComponent<EndLevel>();
@@ -91,7 +106,12 @@ public class WorldControl : MonoBehaviour {
     void OnGUI()
     {
         if (endLevel.HasWon)
-            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "WIENER!", menuStyle);
+        {
+            if ((int)Time.time % 2 == 1)
+            {
+                GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "WIENER!", menuStyle);
+            }
+        }
         else if (paused)
             GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Paused", menuStyle);
         else if (gameOver)
