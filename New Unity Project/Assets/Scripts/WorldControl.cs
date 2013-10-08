@@ -134,7 +134,7 @@ public class WorldControl : MonoBehaviour {
             CharacterControl characterControl = player.GetComponent<CharacterControl>();
             characterControl.Blink();
             if (score > 0)
-                score--;
+                score /= 2;
             lives--;
             respawning = false;
         }
